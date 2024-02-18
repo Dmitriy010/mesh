@@ -51,7 +51,9 @@ public class AccountServiceImpl implements AccountService {
     var actualBalance = accountEntity.getActualBalance();
     var increaseAmount = actualBalance.multiply(BigDecimal.valueOf(increaseMultiplier));
     var newActualBalance = actualBalance.add(increaseAmount);
+
     accountEntity.setActualBalance(newActualBalance);
+    accountRepository.save(accountEntity);
 
     log.debug(
         "Актуальный баланс аккаунта изменен, "

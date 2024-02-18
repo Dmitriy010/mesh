@@ -33,3 +33,7 @@ build/
 
 ### Log files ###
 logs/*
+
+### Volumes ###
+monitoring/grafana/**
+monitoring/prometheus/**

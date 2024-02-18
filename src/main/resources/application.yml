@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: mesh
+
+  redis:
+    host: localhost
+    port: 6379
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+
+scheduler:
+  poolSize: 1
+  intervalIncreaseBalance: 30000
+  maxIncreaseMultiplier: 2.07
+  increaseMultiplier: 0.1
+
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  expiration: 86400000
+  claim_key: USER_ID

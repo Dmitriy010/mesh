@@ -1,0 +1,602 @@
+openapi: 3.0.3
+info:
+  title: Mesh API
+  description: Тестовое API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Стандартный url локального веб-сервера
+tags:
+  - name: auth
+    description: методы аутентификации
+  - name: user
+    description: методы для работы с пользователем
+  - name: transfer
+    description: методы для работы с денежными переводами
+
+paths:
+  /auth/sign-in:
+    post:
+      tags:
+        - auth
+      summary: Аутентификация пользователя
+      operationId: signIn
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequest'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtTokenResponse'
+        '401':
+          description: Пользователь не авторизирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Конфликт при выполнении операций на сервере
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users:
+    post:
+      tags:
+        - user
+      summary: Получить список пользователей с фильтрацией и пагинацией
+      operationId: findAllByUserFilterPage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserFilterRequest'
+      parameters:
+        - $ref: '#/components/parameters/pageNumber'
+        - $ref: '#/components/parameters/recordsNumber'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPageResponse'
+        '401':
+          description: Пользователь не авторизирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - BearerAuth: [ ]
+
+  /users/{userId}/phones:
+    post:
+      tags:
+        - user
+      summary: Добавления телефона для пользователя
+      operationId: addPhoneByUserId
+      parameters:
+        - $ref: '#/components/parameters/userId'
+        - $ref: '#/components/parameters/number'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PhoneResponse'
+        '401':
+          description: Пользователь не авторизирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ресурс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Конфликт при выполнении операций на сервере
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - BearerAuth: [ ]
+
+  /users/phones/{phoneId}:
+    patch:
+      tags:
+        - user
+      summary: Обновление номера телефона пользователя
+      operationId: updatePhoneById
+      parameters:
+        - $ref: '#/components/parameters/phoneId'
+        - $ref: '#/components/parameters/number'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PhoneResponse'
+        '401':
+          description: Пользователь не авторизирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ресурс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+      security:
+        - BearerAuth: [ ]
+    delete:
+      tags:
+        - user
+      summary: Удаление номера телефона пользователя
+      operationId: deletePhoneById
+      parameters:
+        - $ref: '#/components/parameters/phoneId'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PhoneResponse'
+        '401':
+          description: Пользователь не авторизирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ресурс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - BearerAuth: [ ]
+
+  /users/{userId}/emails:
+    post:
+      tags:
+        - user
+      summary: Добавления почты для пользователя
+      operationId: addEmailByUserId
+      parameters:
+        - $ref: '#/components/parameters/userId'
+        - $ref: '#/components/parameters/email'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmailResponse'
+        '401':
+          description: Пользователь не авторизирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ресурс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Конфликт при выполнении операций на сервере
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - BearerAuth: [ ]
+
+  /users/emails/{emailId}:
+    patch:
+      tags:
+        - user
+      summary: Обновление почты пользователя
+      operationId: updateEmailById
+      parameters:
+        - $ref: '#/components/parameters/emailId'
+        - $ref: '#/components/parameters/email'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmailResponse'
+        '401':
+          description: Пользователь не авторизирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ресурс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - BearerAuth: [ ]
+
+    delete:
+      tags:
+        - user
+      summary: Удаление почты пользователя
+      operationId: deleteEmailById
+      parameters:
+        - $ref: '#/components/parameters/emailId'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmailResponse'
+        '401':
+          description: Пользователь не авторизирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ресурс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /transfer/users/{userId}:
+    post:
+      tags:
+        - transfer
+      summary: Перевод денежных средств пользователю
+      operationId: transferMoney
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferMoneyRequest'
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '202':
+          description: Операция принята
+        '401':
+          description: Пользователь не авторизирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ресурс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - BearerAuth: [ ]
+components:
+  schemas:
+    UserFilterRequest:
+      type: object
+      properties:
+        dateOfBirth:
+          type: string
+          pattern: '^\d{2}\.\d{2}\.\d{4}$'
+          example: 11.11.2011
+          description: Фильтр пользователей по дате рождения (больше указанной даты)
+        phone:
+          type: string
+          pattern: '^7\d{10}$'
+          description: Фильтр пользователей по номеру телефона (100% совпадение)
+          example: 79118765643
+        name:
+          type: string
+          minLength: 3
+          maxLength: 50
+          example: Дмитрий
+          description: Фильтр пользователей по имени (начинается с указанного текста)
+        email:
+          type: string
+          minLength: 3
+          maxLength: 200
+          description: Фильтр пользователей по адресу электронной почты (100% совпадение)
+          example: user@mail.ru
+    SignInRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          minLength: 3
+          maxLength: 200
+          description: Логин пользователя(адрес электронной почты пользователя или номер телефона)
+          example: user1@mail.ru
+        password:
+          type: string
+          description: Пароль пользователя
+          example: useruser1
+          minLength: 8
+          maxLength: 500
+    TransferMoneyRequest:
+      type: object
+      properties:
+        value:
+          type: number
+          format: decimal
+          description: Денежная сумма для перевода
+          example: 100.5
+          minimum: 0
+          exclusiveMinimum: true
+
+    JwtTokenResponse:
+      type: object
+      properties:
+        jwtToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiJ9.eyJVU0VSX0lEIjoyLCJzdWIiOiJ1c2VyMkBtYWlsLnJ1IiwiaWF0IjoxNzA4MDA1NDA1LCJleHAiOjE3MDgwOTE4MDV9.PWeFtO8B92Nwi-QqK7NG8lq4Pstt1DbczvL3x2NEM1M
+          description: Jwt токен пользователя
+    UserPageResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResponse'
+        pageInfo:
+          $ref: '#/components/schemas/PageResponse'
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Идентификатор пользователя
+          example: 1
+        name:
+          type: string
+          description: Имя пользователя
+          example: Дмитрий
+        dateOfBirth:
+          type: string
+          description: Дата рождения пользователя
+          example: 11.11.2011
+        balance:
+          type: number
+          format: decimal
+          description: Баланс пользователя
+          example: 44.22
+        actualBalance:
+          type: number
+          format: decimal
+          description: Актуальный баланс пользователя
+          example: 144.22
+        phones:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneResponse'
+        emails:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailResponse'
+    PhoneResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Идентификатор телефона
+          example: 1
+        number:
+          type: string
+          description: Номер телефона
+          example: 79118765423
+    EmailResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Идентификатор почты
+          example: 1
+        address:
+          type: string
+          description: Адрес почты
+          example: user1@mail.ru
+    PageResponse:
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          description: Текущий номер страницы
+          example: 1
+        recordsNumber:
+          type: integer
+          description: Количество записей на странице
+          example: 10
+        totalElements:
+          type: integer
+          format: int64
+          description: Общее количество записей
+          example: 20
+        totalPages:
+          type: integer
+          description: Общее количество страниц
+          example: 2
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Код ошибки
+          example: 1
+        message:
+          type: string
+          description: Сообщение об ошибке
+          example: Пользователь не найден
+        time:
+          type: string
+          description: Дата и время ошибки
+          example: 11.11.2023 11:11:11
+        info:
+          type: string
+          description: Дополнительная информация
+          example: Не соответствие полей
+  parameters:
+    userId:
+      name: userId
+      in: path
+      required: true
+      description: Идентификатор пользователя
+      example: 1
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+    phoneId:
+      name: phoneId
+      in: path
+      required: true
+      description: Идентификатор телефона пользователя
+      example: 1
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+    emailId:
+      name: emailId
+      in: path
+      required: true
+      description: Идентификатор почты пользователя
+      example: 1
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+    email:
+      name: email
+      in: query
+      required: true
+      description: Новыя почта пользователя
+      example: user1@mail.ru
+      schema:
+        type: string
+        minLength: 3
+        maxLength: 200
+    number:
+      name: number
+      in: query
+      required: true
+      description: Номер телефона пользователя
+      example: 79876565421
+      schema:
+        type: string
+        pattern: '^7\d{10}$'
+    recordsNumber:
+      name: recordsNumber
+      in: query
+      example: 1
+      schema:
+        type: integer
+        minimum: 1
+        default: 10
+      description: Количество записей на странице
+    pageNumber:
+      name: pageNumber
+      in: query
+      example: 1
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Номер страницы
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

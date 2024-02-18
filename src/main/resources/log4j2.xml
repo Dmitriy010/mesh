@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATH">./logs</Property>
+        <Property name="ROLLING_FILE_NAME">mesh</Property>
+        <Property name="CONSOLE_LOG_PATTERN">%clr{%d{dd.MM.yyyy HH:mm:ss.SSS}}{cyan} %clr{%5p} %clr{---}{faint} %clr{[%15.15t]}{magenta} %clr{%-40.40c{1.}}{blue} %clr{:}{faint} %msg%n%throwable</Property>
+        <Property name="FILE_LOG_PATTERN">%d{dd.MM.yyyy HH:mm:ss.SSS} %5p --- [%15.15t] %-40.40c{1.} : %msg%n%throwable</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${CONSOLE_LOG_PATTERN}"/>
+        </Console>
+        <RollingFile name="RollingFile" fileName="${LOG_PATH}/${ROLLING_FILE_NAME}.log"
+                     filePattern="${LOG_PATH}/${ROLLING_FILE_NAME}_%d{dd.MM.yyyy}_%i.log">
+            <PatternLayout pattern="${FILE_LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="5MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="5">
+                <Delete basePath="${LOG_PATH}" maxDepth="5">
+                    <IfLastModified age="3d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        <Socket name="Socket" host="${sys:logstash.host.name:-localhost}" port="${sys:logstash.port.number:-50000}" reconnectionDelayMillis="5000">
+            <PatternLayout pattern="${FILE_LOG_PATTERN}" />
+        </Socket>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+            <AppenderRef ref="Socket"/>
+        </Root>
+    </Loggers>
+</Configuration>
